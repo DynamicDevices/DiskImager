@@ -170,12 +170,12 @@
             // labelSize
             // 
             this.labelSize.AutoSize = true;
-            this.labelSize.Enabled = false;
             this.labelSize.Location = new System.Drawing.Point(475, 58);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(35, 13);
             this.labelSize.TabIndex = 11;
             this.labelSize.Text = "label1";
+            this.labelSize.Visible = false;
             // 
             // MainForm
             // 
