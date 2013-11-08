@@ -13,6 +13,7 @@ ChangeLog
 =========
 
 1.0.0	08/11/13	AJL		Initial Commit. Reads and Writes SD cards
+1.0.1	08/11/13	AJL		Refactoring for cleanup. Fixed issue with SEH exception due to SafeHandle disposal
 
 Testing - Windows 8.1 Professional
 
