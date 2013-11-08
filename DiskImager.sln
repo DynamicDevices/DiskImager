@@ -11,6 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DiskImager.Installer", "DiskImager.Installer\DiskImager.Installer.vdproj", "{001C286E-8D1F-4B60-8E76-FF20CDE63C39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libs", "Libs\Libs.csproj", "{1B0F140A-DFA6-4693-9C09-FCB9E0B35189}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19CD6AEC-F046-48F6-8C68-E4C460CCAE47}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -23,6 +30,8 @@ Global
 		{4A73C63C-2BF2-4F85-AA55-A5CA581A33B4}.Release|x86.Build.0 = Release|x86
 		{001C286E-8D1F-4B60-8E76-FF20CDE63C39}.Debug|x86.ActiveCfg = Debug
 		{001C286E-8D1F-4B60-8E76-FF20CDE63C39}.Release|x86.ActiveCfg = Release
+		{1B0F140A-DFA6-4693-9C09-FCB9E0B35189}.Debug|x86.ActiveCfg = Debug|x86
+		{1B0F140A-DFA6-4693-9C09-FCB9E0B35189}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
