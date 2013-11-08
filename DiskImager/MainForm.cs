@@ -27,6 +27,10 @@ namespace DynamicDevices.DiskWriter
             Icon = Utility.GetAppIcon();
 
             PopulateDrives();
+            if (comboBoxDrives.Items.Count > 0)
+                EnableButtons();
+            else
+                DisableButtons(false);
 
             // Read registry values
             var key = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Dynamic Devices Ltd\\DiskImager");
@@ -112,7 +116,7 @@ namespace DynamicDevices.DiskWriter
                 textBoxFileName.Text = saveFileDialog1.FileName;                
             }
 
-            DisableButtons();
+            DisableButtons(true);
 
             try
             {
@@ -141,7 +145,7 @@ namespace DynamicDevices.DiskWriter
                 textBoxFileName.Text = openFileDialog1.FileName;
             }
 
-            DisableButtons();
+            DisableButtons(true);
 
             try
             {
@@ -218,17 +222,28 @@ namespace DynamicDevices.DiskWriter
                 comboBoxDrives.SelectedIndex = 0;
         }
 
-        void WatcherEventArrived(object sender, EventArrivedEventArgs e)
+        void WatcherEventArrived(object sender, EventArgs e)
         {
+            if(InvokeRequired)
+            {
+                Invoke(new EventHandler(WatcherEventArrived));
+                return;
+            }
+
             PopulateDrives();
+
+            if (comboBoxDrives.Items.Count > 0)
+                EnableButtons();
+            else
+                DisableButtons(false);
         }
 
-        private void DisableButtons()
+        private void DisableButtons(bool running)
         {
             buttonRead.Enabled = false;
             buttonWrite.Enabled = false;
-            buttonExit.Enabled = false;
-            buttonCancel.Enabled = true;
+            buttonExit.Enabled = !running;
+            buttonCancel.Enabled = running;
             comboBoxDrives.Enabled = false;
             textBoxFileName.Enabled = false;
             buttonChooseFile.Enabled = false;            
