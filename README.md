@@ -11,7 +11,7 @@ This utility is a C#.NET implementation, and adds a couple of features I wanted 
 
 - reads/writes images to/from compressed file formats: ZIP, TGZ, GZ
 
-- remembers the last file you read/write 
+- remembers the last file you read/wrote 
 
 - provides more file filters within file dialog for typical image files (.img, .bin, .sdcard)
 
