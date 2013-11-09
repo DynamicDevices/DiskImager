@@ -1,7 +1,9 @@
 DiskImager
 ==========
 
-A Windows Disk Imager. A C#.NET utility, released under GPLv3, for reading / writing SD cards and USB devices
+A Windows Disk Imager. A C#.NET utility for reading / writing SD cards and USB devices
+
+License: This software utility is released under GPLv3.
 
 The current release can be downloaded here 
 
