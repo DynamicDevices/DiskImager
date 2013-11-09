@@ -25,7 +25,7 @@ namespace DynamicDevices.DiskWriter
         {
             InitializeComponent();
 
-            toolStripStatusLabel1.Text = @"OK";
+            toolStripStatusLabel1.Text = @"Initialised. Licensed under GPLv3. Use at own risk!";
 
             saveFileDialog1.OverwritePrompt = false;
             saveFileDialog1.Filter = @"Image Files (*.img,*.bin,*.sdcard)|*.img;*.bin;*.sdcard|Compressed Files (*.zip,*.gz,*tgz)|*.zip;*.gz;*.tgz|All files (*.*)|*.*";
