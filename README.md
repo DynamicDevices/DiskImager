@@ -9,6 +9,8 @@ The current release can be downloaded here
 
 http://www.dynamicdevices.co.uk/downloads/DiskImager.Installer.msi
 
+(Please feed back any platform testing you do, or any issues you encounter. Thanks.)
+
 This utility is a C#.NET implementation, and adds a couple of features I wanted to see:
 
 - reads/writes images to/from compressed file formats: ZIP, TGZ, GZ
