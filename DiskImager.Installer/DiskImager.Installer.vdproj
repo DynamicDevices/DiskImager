@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+        "MsmKey" = "8:_787BE1820C8519178183E763E3082672"
         "OwnerKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -34,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+        "OwnerKey" = "8:_787BE1820C8519178183E763E3082672"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -142,14 +142,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_787BE1820C8519178183E763E3082672"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+                    "_787BE1820C8519178183E763E3082672"
                     {
                     "Name" = "8:SharpZipLib.dll"
                     "Attributes" = "3:512"
@@ -169,7 +169,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -779,7 +779,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
             {
-            "SourcePath" = "8:..\\DiskImager\\obj\\x86\\Release\\DiskImager.exe"
+            "SourcePath" = "8:..\\DiskImager\\obj\\x86\\Debug\\DiskImager.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_072AE4B10D3C471AA2B16D68E3691837"
