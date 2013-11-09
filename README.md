@@ -3,9 +3,9 @@ DiskImager
 
 A Windows Disk Imager. A C#.NET utility for reading / writing SD cards and USB devices
 
-Inspired by the excellent Win32DiskImager - http://sourceforge.net/projects/win32diskimager/
+The current release can be downloaded here 
 
-The current release can be downloaded here - http://www.dynamicdevices.co.uk/downloads/DiskImager-latest.exe
+http://www.dynamicdevices.co.uk/downloads/DiskImager-latest.exe
 
 This utility is a C#.NET implementation, and adds a couple of features I wanted to see:
 
@@ -17,7 +17,9 @@ This utility is a C#.NET implementation, and adds a couple of features I wanted 
 
 - it also *might* be slightly faster when dealing with uncompressed read/write
 
-**NOTE This application is under development and could possibly cause damage to your computer drive(s). We cannot take responsibility for any damage caused or losses incurred through use of this utility. Use at own risk!**
+*NOTE This application is under development and could possibly cause damage to your computer drive(s). We cannot take responsibility for any damage caused or losses incurred through use of this utility. Use at own risk!*
+
+Credits: Inspired by the excellent Win32DiskImager - http://sourceforge.net/projects/win32diskimager/
 
 ChangeLog
 =========
