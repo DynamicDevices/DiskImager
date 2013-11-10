@@ -4,6 +4,11 @@ using System.Runtime.InteropServices;   // required for Marshal
 using System.IO;
 using Microsoft.Win32.SafeHandles;     
 
+//
+// Used Jan Dolinay's example from CodeProject
+//
+// see: http://www.codeproject.com/Articles/18062/Detecting-USB-Drive-Removal-in-a-C-Program
+//
 namespace DynamicDevices.DiskWriter.Detection
 {
     /// <summary>
