@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using DynamicDevices.DiskWriter.Detection;
 using DynamicDevices.DiskWriter.Win32;
 using Microsoft.Win32;
+using System.Management;
 
 namespace DynamicDevices.DiskWriter
 {
@@ -35,8 +36,9 @@ namespace DynamicDevices.DiskWriter
             var version = Assembly.GetEntryAssembly().GetName().Version;
             Text += @" v" + version;
 
-            // Set app icon
-            Icon = Utility.GetAppIcon();
+            // Set app icon (not working on Mono/Linux)
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+                Icon = Utility.GetAppIcon();
 
             PopulateDrives();
             if (comboBoxDrives.Items.Count > 0)
@@ -186,6 +188,16 @@ namespace DynamicDevices.DiskWriter
             if (string.IsNullOrEmpty(textBoxFileName.Text))
                 ChooseFile();
 
+            if( ((string)comboBoxDrives.SelectedItem).ToUpper().StartsWith("C:"))
+            {
+                var dr =
+                    MessageBox.Show(
+                        "C: is almost certainly your main hard drive. Writing to this will likely destroy your data, and brick your PC. Are you absolutely sure you want to do this?",
+                        "*** WARNING ***", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dr != DialogResult.Yes)
+                    return;
+            }
+
             DisableButtons(true);
 
             try
@@ -316,6 +328,15 @@ namespace DynamicDevices.DiskWriter
                 _eCompType = EnumCompressionType.Zip;
         }
 
+        private void DisplayAllDrivesToolStripMenuItemCheckedChanged(object sender, EventArgs e)
+        {
+            PopulateDrives();
+            if (comboBoxDrives.Items.Count > 0)
+                EnableButtons();
+            else
+                DisableButtons(false);
+        }
+
         /// <summary>
         /// Load in the drives
         /// </summary>
@@ -333,11 +354,23 @@ namespace DynamicDevices.DiskWriter
             foreach (var drive in DriveInfo.GetDrives())
             {
                 // Only display removable drives
-                if (drive.DriveType == DriveType.Removable)
+                if (drive.DriveType == DriveType.Removable || displayAllDrivesToolStripMenuItem.Checked)
                 {
                     comboBoxDrives.Items.Add(drive.Name.TrimEnd(new[] { '\\' }));
                 }
             }
+
+#if false
+            //import the System.Management namespace at the top in your "using" statement.
+            var searcher = new ManagementObjectSearcher(
+                 "SELECT * FROM Win32_DiskDrive WHERE InterfaceType='USB'");
+            foreach (var disk in searcher.Get())
+            {
+                var props = disk.Properties;
+                foreach(var p in props)
+                    Console.WriteLine(p.Name + " = " + p.Value);
+            }
+#endif
 
             if (comboBoxDrives.Items.Count > 0)
                 comboBoxDrives.SelectedIndex = 0;

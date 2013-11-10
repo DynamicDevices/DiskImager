@@ -46,8 +46,12 @@
             this.radioButtonCompTgz = new System.Windows.Forms.RadioButton();
             this.radioButtonCompGz = new System.Windows.Forms.RadioButton();
             this.radioButtonCompZip = new System.Windows.Forms.RadioButton();
+            this.menuStripMain = new System.Windows.Forms.MenuStrip();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayAllDrivesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.groupBoxCompression.SuspendLayout();
+            this.menuStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxDrives
@@ -56,14 +60,14 @@
             this.comboBoxDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDrives.ForeColor = System.Drawing.SystemColors.MenuText;
             this.comboBoxDrives.FormattingEnabled = true;
-            this.comboBoxDrives.Location = new System.Drawing.Point(469, 34);
+            this.comboBoxDrives.Location = new System.Drawing.Point(469, 59);
             this.comboBoxDrives.Name = "comboBoxDrives";
             this.comboBoxDrives.Size = new System.Drawing.Size(121, 21);
             this.comboBoxDrives.TabIndex = 0;
             // 
             // textBoxFileName
             // 
-            this.textBoxFileName.Location = new System.Drawing.Point(12, 35);
+            this.textBoxFileName.Location = new System.Drawing.Point(12, 60);
             this.textBoxFileName.Name = "textBoxFileName";
             this.textBoxFileName.Size = new System.Drawing.Size(420, 20);
             this.textBoxFileName.TabIndex = 1;
@@ -71,7 +75,7 @@
             // 
             // buttonRead
             // 
-            this.buttonRead.Location = new System.Drawing.Point(12, 84);
+            this.buttonRead.Location = new System.Drawing.Point(12, 109);
             this.buttonRead.Name = "buttonRead";
             this.buttonRead.Size = new System.Drawing.Size(75, 23);
             this.buttonRead.TabIndex = 2;
@@ -81,7 +85,7 @@
             // 
             // buttonWrite
             // 
-            this.buttonWrite.Location = new System.Drawing.Point(93, 84);
+            this.buttonWrite.Location = new System.Drawing.Point(93, 109);
             this.buttonWrite.Name = "buttonWrite";
             this.buttonWrite.Size = new System.Drawing.Size(75, 23);
             this.buttonWrite.TabIndex = 3;
@@ -91,7 +95,7 @@
             // 
             // buttonExit
             // 
-            this.buttonExit.Location = new System.Drawing.Point(255, 84);
+            this.buttonExit.Location = new System.Drawing.Point(255, 109);
             this.buttonExit.Name = "buttonExit";
             this.buttonExit.Size = new System.Drawing.Size(75, 23);
             this.buttonExit.TabIndex = 4;
@@ -101,7 +105,7 @@
             // 
             // buttonChooseFile
             // 
-            this.buttonChooseFile.Location = new System.Drawing.Point(438, 35);
+            this.buttonChooseFile.Location = new System.Drawing.Point(438, 60);
             this.buttonChooseFile.Name = "buttonChooseFile";
             this.buttonChooseFile.Size = new System.Drawing.Size(25, 20);
             this.buttonChooseFile.TabIndex = 5;
@@ -113,7 +117,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 155);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 183);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(600, 22);
             this.statusStrip1.TabIndex = 6;
@@ -133,7 +137,7 @@
             // labelFileName
             // 
             this.labelFileName.AutoSize = true;
-            this.labelFileName.Location = new System.Drawing.Point(12, 9);
+            this.labelFileName.Location = new System.Drawing.Point(12, 34);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Size = new System.Drawing.Size(54, 13);
             this.labelFileName.TabIndex = 7;
@@ -142,7 +146,7 @@
             // labelDriveTitle
             // 
             this.labelDriveTitle.AutoSize = true;
-            this.labelDriveTitle.Location = new System.Drawing.Point(466, 9);
+            this.labelDriveTitle.Location = new System.Drawing.Point(466, 34);
             this.labelDriveTitle.Name = "labelDriveTitle";
             this.labelDriveTitle.Size = new System.Drawing.Size(89, 13);
             this.labelDriveTitle.TabIndex = 8;
@@ -150,7 +154,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 132);
+            this.progressBar1.Location = new System.Drawing.Point(12, 157);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(578, 10);
             this.progressBar1.TabIndex = 9;
@@ -158,7 +162,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(174, 84);
+            this.buttonCancel.Location = new System.Drawing.Point(174, 109);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -172,7 +176,7 @@
             this.groupBoxCompression.Controls.Add(this.radioButtonCompTgz);
             this.groupBoxCompression.Controls.Add(this.radioButtonCompGz);
             this.groupBoxCompression.Controls.Add(this.radioButtonCompZip);
-            this.groupBoxCompression.Location = new System.Drawing.Point(336, 71);
+            this.groupBoxCompression.Location = new System.Drawing.Point(336, 96);
             this.groupBoxCompression.Name = "groupBoxCompression";
             this.groupBoxCompression.Size = new System.Drawing.Size(252, 49);
             this.groupBoxCompression.TabIndex = 11;
@@ -225,17 +229,44 @@
             this.radioButtonCompZip.UseVisualStyleBackColor = true;
             this.radioButtonCompZip.CheckedChanged += new System.EventHandler(this.RadioButtonCompZipCheckedChanged);
             // 
+            // menuStripMain
+            // 
+            this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem});
+            this.menuStripMain.Location = new System.Drawing.Point(0, 0);
+            this.menuStripMain.Name = "menuStripMain";
+            this.menuStripMain.Size = new System.Drawing.Size(600, 24);
+            this.menuStripMain.TabIndex = 12;
+            this.menuStripMain.Text = "menuStrip1";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.displayAllDrivesToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // displayAllDrivesToolStripMenuItem
+            // 
+            this.displayAllDrivesToolStripMenuItem.CheckOnClick = true;
+            this.displayAllDrivesToolStripMenuItem.Name = "displayAllDrivesToolStripMenuItem";
+            this.displayAllDrivesToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            this.displayAllDrivesToolStripMenuItem.Text = "Display All Drives  *** DANGEROUS ***";
+            this.displayAllDrivesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.DisplayAllDrivesToolStripMenuItemCheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 177);
+            this.ClientSize = new System.Drawing.Size(600, 205);
             this.Controls.Add(this.groupBoxCompression);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.labelDriveTitle);
             this.Controls.Add(this.labelFileName);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStripMain);
             this.Controls.Add(this.buttonChooseFile);
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.buttonWrite);
@@ -243,6 +274,7 @@
             this.Controls.Add(this.textBoxFileName);
             this.Controls.Add(this.comboBoxDrives);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MainMenuStrip = this.menuStripMain;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -252,6 +284,8 @@
             this.statusStrip1.PerformLayout();
             this.groupBoxCompression.ResumeLayout(false);
             this.groupBoxCompression.PerformLayout();
+            this.menuStripMain.ResumeLayout(false);
+            this.menuStripMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,6 +311,9 @@
         private System.Windows.Forms.RadioButton radioButtonCompTgz;
         private System.Windows.Forms.RadioButton radioButtonCompGz;
         private System.Windows.Forms.RadioButton radioButtonCompZip;
+        private System.Windows.Forms.MenuStrip menuStripMain;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem displayAllDrivesToolStripMenuItem;
     }
 }
 
