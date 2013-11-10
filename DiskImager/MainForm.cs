@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Management;
+using DynamicDevices.DiskWriter.Win32;
 using Microsoft.Win32;
 
 namespace DynamicDevices.DiskWriter
@@ -11,9 +11,8 @@ namespace DynamicDevices.DiskWriter
     {
         #region Fields
 
-        private readonly ManagementEventWatcher _watcher = new ManagementEventWatcher();
-
         private readonly Disk _disk;
+        private readonly IDiskAccess _diskAccess;
 
         private EnumCompressionType _eCompType;
 
@@ -68,15 +67,20 @@ namespace DynamicDevices.DiskWriter
             }
 
             // Create disk object for media accesses
-            _disk = new Disk();
+            var pid = Environment.OSVersion.Platform;
+            if (pid == PlatformID.Unix)
+                _diskAccess = new LinuxDiskAccess();
+            else 
+                _diskAccess = new Win32DiskAccess();
+
+            _disk = new Disk(_diskAccess);
+
             _disk.OnLogMsg += _disk_OnLogMsg;
             _disk.OnProgress += _disk_OnProgress;
             
             // Detect insertions / removals
-            var query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2 OR EventType = 3");
-            _watcher.EventArrived += WatcherEventArrived;
-            _watcher.Query = query;
-            _watcher.Start();        
+            _diskAccess.StartListenForChanges();
+            _diskAccess.OnDiskChanged += WatcherEventArrived;
         }
 
         #endregion
@@ -207,7 +211,7 @@ namespace DynamicDevices.DiskWriter
                 key.Close();
             }
 
-            _watcher.Stop();
+            _diskAccess.StopListenForChanges();
         }
 
         /// <summary>

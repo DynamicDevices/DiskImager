@@ -1,12 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Win32.SafeHandles;
 
 namespace DynamicDevices.DiskWriter
 {
@@ -18,9 +16,51 @@ namespace DynamicDevices.DiskWriter
     {
         public bool IsCancelling { get; set;}
 
-        public event TextHandler OnLogMsg;
+        private event TextHandler _onLogMsg;
 
-        public event ProgressHandler OnProgress;
+        public event TextHandler OnLogMsg
+        {
+            add
+            {
+                _onLogMsg -= value;
+                _onLogMsg += value;
+                _diskAccess.OnLogMsg -= value;
+                _diskAccess.OnLogMsg += value;
+            }
+            remove
+            {
+                _onLogMsg -= value;
+                _diskAccess.OnLogMsg -= value;
+            }
+        }
+
+        private event ProgressHandler _onProgress;
+
+        public event ProgressHandler OnProgress
+        {
+            add
+            {
+                _onProgress -= value;
+                _onProgress += value;
+                _diskAccess.OnProgress += value;
+            }
+            remove
+            {
+                _onProgress -= value;
+                _diskAccess.OnProgress -= value; 
+            }
+        }
+
+        private readonly IDiskAccess _diskAccess;
+
+        /// <summary>
+        /// Construct Disk object with underlying platform specific disk access implementation
+        /// </summary>
+        /// <param name="diskAccess"></param>
+        public Disk(IDiskAccess diskAccess)
+        {
+            _diskAccess = diskAccess;
+        }
 
         /// <summary>
         /// 
@@ -31,106 +71,50 @@ namespace DynamicDevices.DiskWriter
         /// <returns></returns>
         public bool WriteDrive(string driveLetter, string fileName, EnumCompressionType eCompType)
         {
-            var success = false;
-            int intOut;
-
             IsCancelling = false;
 
             var dtStart = DateTime.Now;
 
-            var diskIndex = -1;
-
-            SafeFileHandle partitionHandle = null;
-
             //
-            // Get physical drive partition for logical partition
+            // Lock logical drive
             //
-            var scope = new ManagementScope(@"\root\cimv2");
-            var query = new ObjectQuery("select * from Win32_DiskPartition");
-            var searcher = new ManagementObjectSearcher(scope, query);
-            var drives = searcher.Get();
-            foreach (var current in drives)
-            {
-                var associators =
-                    new ObjectQuery("ASSOCIATORS OF {Win32_DiskPartition.DeviceID=\"" + current["deviceid"] +
-                                    "\"} where assocclass=Win32_LogicalDiskToPartition");
-                searcher = new ManagementObjectSearcher(scope, associators);
-                var disks = searcher.Get();
-                if (
-                    !(from ManagementObject disk in disks select (string) disk["deviceid"]).Any(
-                        thisDisk => thisDisk == driveLetter)) continue;
-                diskIndex = (int)(UInt32)current["diskindex"]; ;
-
-                //
-                // Unmount partition (Todo: Note that we currntly only handle unmounting of one partition, which is the usual case for SD Cards)
-                //
-
-                //
-                // Open the volume
-                ///
-                partitionHandle = NativeMethods.CreateFile(@"\\.\" + driveLetter, NativeMethods.GENERIC_READ, NativeMethods.FILE_SHARE_READ, IntPtr.Zero, NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero);
-                if (partitionHandle.IsInvalid)
-                {
-                    OnLogMsg(this, @"Failed to open device");
-                    partitionHandle.Dispose();
-                    return false;
-                }
-
-                //
-                // Lock it
-                //
-                success = NativeMethods.DeviceIoControl(partitionHandle, NativeMethods.FSCTL_LOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
-                if (!success)
-                {
-                    OnLogMsg(this, @"Failed to lock device");
-                    partitionHandle.Dispose();
-                    return false;
-                }
-
-                //
-                // Dismount it
-                //
-                success = NativeMethods.DeviceIoControl(partitionHandle, NativeMethods.FSCTL_DISMOUNT_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
-                if (!success)
-                {
-                    OnLogMsg(this, @"Error dismounting volume: " + Marshal.GetHRForLastWin32Error());
-                    NativeMethods.DeviceIoControl(partitionHandle, NativeMethods.FSCTL_UNLOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
-                    partitionHandle.Dispose();
-                    return false;
-                }
-            }
-
-            if (diskIndex < 0)
-            {
-                OnLogMsg(this, @"Error: Couldn't map partition to physical drive");
-                goto readfail3;
-            }
-
-            success = false;
-
-            var physicalDrive = @"\\.\PhysicalDrive" + diskIndex;
-
-            //
-            // Now that we've dismounted the logical volume mounted on the removable drive we can open up the physical disk to write
-            //
-            var diskHandle = NativeMethods.CreateFile(physicalDrive, NativeMethods.GENERIC_WRITE, 0, IntPtr.Zero, NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero);
-            if (diskHandle.IsInvalid)
-            {
-                OnLogMsg(this, @"Failed to open device: " + Marshal.GetHRForLastWin32Error());
-                goto readfail3;
-            }
-
-            //
-            // Get drive size (NOTE: that WMI and IOCTL_DISK_GET_DRIVE_GEOMETRY don't give us the right value so we do it this way)
-            //
-
-            var driveSize = GetDiskSize(diskHandle);
-
-            success = NativeMethods.DeviceIoControl(diskHandle, NativeMethods.FSCTL_LOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
+            var success = _diskAccess.LockDrive(driveLetter);
             if (!success)
             {
-                OnLogMsg(this, @"Failed to lock device");
-                diskHandle.Dispose();
+                LogMsg(@"Failed to lock drive");
+                return false;
+            }            
+            
+            //
+            // Get physical drive partition for logical partition
+            // 
+            var physicalDrive = _diskAccess.GetPhysicalPathForLogicalPath(driveLetter);
+            if (string.IsNullOrEmpty(physicalDrive))
+            {
+                LogMsg(@"Error: Couldn't map partition to physical drive");
+                _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            //
+            // Get drive size 
+            //
+            var driveSize = _diskAccess.GetDriveSize(physicalDrive);
+            if (driveSize <= 0)
+            {
+                LogMsg(@"Failed to get device size");
+                _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            //
+            // Open the physical drive
+            // 
+            var physicalHandle = _diskAccess.Open(physicalDrive);
+            if (physicalHandle == null)
+            {
+                LogMsg(@"Failed to open physical drive");
+                _diskAccess.UnlockDrive();
                 return false;
             }
 
@@ -148,20 +132,13 @@ namespace DynamicDevices.DiskWriter
                         {
                             var zipFile = new ZipFile(basefs);
                 
-                            Stream zis = null;
-
-                            foreach(ZipEntry zipEntry in zipFile)
-                            {
-                                if (!zipEntry.IsFile)
-                                    continue;
-
-                                zis = zipFile.GetInputStream(zipEntry);
-                                break;
-                            }
+                            Stream zis = (from ZipEntry zipEntry in zipFile
+                                          where zipEntry.IsFile
+                                          select zipFile.GetInputStream(zipEntry)).FirstOrDefault();
 
                             if(zis == null)
                             {
-                                OnLogMsg(this, @"Error reading zip input stream");
+                                LogMsg(@"Error reading zip input stream");
                                 goto readfail2;                                
                             }
 
@@ -179,8 +156,7 @@ namespace DynamicDevices.DiskWriter
 
                     case EnumCompressionType.Targzip:
                         {
-                            var gzos = new GZipInputStream(basefs);
-                            gzos.IsStreamOwner = true;
+                            var gzos = new GZipInputStream(basefs) {IsStreamOwner = true};
 
                             var tis = new TarInputStream(gzos);
 
@@ -211,7 +187,7 @@ namespace DynamicDevices.DiskWriter
                         //       This appears when we try to read from a compressed stream as it gives us
                         //       "strange" lengths which then fail to be written via Writefile() so try to build
                         //       up a decent block of bytes here...
-                        int readBytes = 0;
+                        int readBytes;
                         do
                         {
                             readBytes = br.Read(buffer, bufferOffset, buffer.Length - bufferOffset);
@@ -237,15 +213,15 @@ namespace DynamicDevices.DiskWriter
                             trailingBytes = bufferOffset - lastPowerOf2;
                         }
 
-                        if (NativeMethods.WriteFile(diskHandle, buffer, bytesToWrite, out wroteBytes, IntPtr.Zero) < 0)
+                        if (_diskAccess.Write(buffer, bytesToWrite, out wroteBytes) < 0)
                         {
-                            OnLogMsg(this, @"Error writing data to drive: " + Marshal.GetHRForLastWin32Error());
+                            LogMsg(@"Error writing data to drive: " + Marshal.GetHRForLastWin32Error());
                             goto readfail1;
                         }
 
                         if (wroteBytes != bytesToWrite)
                         {
-                            OnLogMsg(this, @"Error writing data to drive - past EOF?");
+                            LogMsg(@"Error writing data to drive - past EOF?");
                             goto readfail1;
                         }
 
@@ -265,9 +241,9 @@ namespace DynamicDevices.DiskWriter
                         var tsElapsed = DateTime.Now.Subtract(dtStart);
                         var bytesPerSec = offset / tsElapsed.TotalSeconds;
 
-                        OnProgress(this, percentDone);
+                        Progress(percentDone);
                         
-                        OnLogMsg(this, @"Wrote " + percentDone + @"%, " + (offset / (1024 * 1024)) + @" MB / " +
+                        LogMsg(@"Wrote " + percentDone + @"%, " + (offset / (1024 * 1024)) + @" MB / " +
                                                      (driveSize / (1024 * 1024) + " MB, " +
                                                       string.Format("{0:F}", (bytesPerSec / (1024 * 1024))) + @" MB/sec, Elapsed time: " + tsElapsed.ToString(@"dd\.hh\:mm\:ss")));
                     }
@@ -275,22 +251,19 @@ namespace DynamicDevices.DiskWriter
             }
 
         readfail1:
-            NativeMethods.DeviceIoControl(diskHandle, NativeMethods.FSCTL_UNLOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
+            _diskAccess.Close();
         readfail2:            
-            diskHandle.Dispose();
-        readfail3:
 
-            if (partitionHandle != null)
-                partitionHandle.Dispose();
+            _diskAccess.UnlockDrive();
 
             var tstotalTime = DateTime.Now.Subtract(dtStart);
 
             if (IsCancelling)
-                OnLogMsg(this, "Cancelled");
-            else if (success)
-                OnLogMsg(this, "All Done - Elapsed time " + tstotalTime.ToString(@"dd\.hh\:mm\:ss"));
-            OnProgress(this, 0);
-            return success;
+                LogMsg("Cancelled");
+            else 
+                LogMsg("All Done - Elapsed time " + tstotalTime.ToString(@"dd\.hh\:mm\:ss"));
+            Progress(0);
+            return true;
         }
 
         /// <summary>
@@ -302,54 +275,50 @@ namespace DynamicDevices.DiskWriter
         /// <returns></returns>
         public bool ReadDrive(string driveLetter, string fileName, EnumCompressionType eCompType)
         {
-            var success = false;
-            int intOut;
-
             IsCancelling = false;
 
             var dtStart = DateTime.Now;
 
             //
-            // Get physical disk index for logical partition
+            // Lock logical drive
             //
-            var diskIndex = GetDiskIndex(driveLetter);
-            if (diskIndex < 0)
+            var success = _diskAccess.LockDrive(driveLetter);
+            if(!success)
             {
-                OnLogMsg(this, @"Error: Couldn't map partition to physical drive");
-                goto readfail3;
+                LogMsg(@"Failed to lock drive");
+                return false;                                
             }
 
             //
-            // Open up physical drive
+            // Map to physical drive
             // 
-            var physicalDrive = @"\\.\PhysicalDrive" + diskIndex;
-
-            var diskHandle = NativeMethods.CreateFile(physicalDrive, NativeMethods.GENERIC_READ, NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero);
-            if (diskHandle.IsInvalid)
+            var physicalDrive = _diskAccess.GetPhysicalPathForLogicalPath(driveLetter);
+            if(string.IsNullOrEmpty(physicalDrive))
             {
-                OnLogMsg(this, @"Failed to open device: " + Marshal.GetHRForLastWin32Error());
-                goto readfail3;
+                LogMsg(@"Error: Couldn't map partition to physical drive");
+                _diskAccess.UnlockDrive();
+                return false;
             }
 
             //
-            // Get drive size (NOTE: that WMI and IOCTL_DISK_GET_DRIVE_GEOMETRY don't give us the right value so we do it this way)
+            // Get drive size 
             //
-            var driveSize = GetDiskSize(diskHandle);
+            var driveSize = _diskAccess.GetDriveSize(physicalDrive);
             if(driveSize <= 0)
             {
-                OnLogMsg(this, @"Failed to get device size");
-                diskHandle.Dispose();
+                LogMsg(@"Failed to get device size");
+                _diskAccess.UnlockDrive();
                 return false;                
             }
 
             //
-            // Lock the drive
+            // Open the physical drive
             // 
-            success = NativeMethods.DeviceIoControl(diskHandle, NativeMethods.FSCTL_LOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
-            if (!success)
+            var physicalHandle = _diskAccess.Open(physicalDrive);
+            if (physicalHandle == null)
             {
-                OnLogMsg(this, @"Failed to lock device");
-                diskHandle.Dispose();
+                LogMsg(@"Failed to open physical drive");
+                _diskAccess.UnlockDrive();
                 return false;
             }
 
@@ -444,19 +413,18 @@ namespace DynamicDevices.DiskWriter
                                  : (ulong) buffer.Length);
 
                         int readBytes;
-                        if (NativeMethods.ReadFile(diskHandle, buffer, readMaxLength, out readBytes, IntPtr.Zero) < 0)
+                        if (_diskAccess.Read(buffer, readMaxLength, out readBytes) < 0)
                         {
-                            OnLogMsg(this, @"Error reading data from drive: " +
+                            LogMsg(@"Error reading data from drive: " +
                                            Marshal.GetHRForLastWin32Error());
                             goto readfail1;
                         }
-
 
                         bw.Write(buffer, 0, readBytes);
 
                         if (readBytes == 0)
                         {
-                            OnLogMsg(this, @"Error reading data from drive - past EOF?");
+                            LogMsg(@"Error reading data from drive - past EOF?");
                             goto readfail1;
                         }
 
@@ -466,8 +434,8 @@ namespace DynamicDevices.DiskWriter
                         var tsElapsed = DateTime.Now.Subtract(dtStart);
                         var bytesPerSec = offset/tsElapsed.TotalSeconds;
 
-                        OnProgress(this, percentDone);
-                        OnLogMsg(this, @"Read " + percentDone + @"%, " + (offset/(1024*1024)) + @" MB / " +
+                        Progress(percentDone);
+                        LogMsg(@"Read " + percentDone + @"%, " + (offset/(1024*1024)) + @" MB / " +
                                        (driveSize/(1024*1024) + " MB, " +
                                         string.Format("{0:F}", (bytesPerSec/(1024*1024))) + @" MB/sec, Elapsed time: " +
                                         tsElapsed.ToString(@"dd\.hh\:mm\:ss")));
@@ -484,83 +452,40 @@ namespace DynamicDevices.DiskWriter
             }
 
         readfail1:
-            NativeMethods.DeviceIoControl(diskHandle, NativeMethods.FSCTL_UNLOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero);
-        readfail2:
-            diskHandle.Dispose();
-        readfail3:
+            
+            _diskAccess.Close();
+            
+            _diskAccess.UnlockDrive();
+            
             var tstotalTime = DateTime.Now.Subtract(dtStart);
 
             if (IsCancelling)
-                OnLogMsg(this, "Cancelled");
-            else if (success)
-                OnLogMsg(this, "All Done - Elapsed time " + tstotalTime.ToString(@"dd\.hh\:mm\:ss"));
-            OnProgress(this, 0);
-            return success;
+                LogMsg("Cancelled");
+            else 
+                LogMsg("All Done - Elapsed time " + tstotalTime.ToString(@"dd\.hh\:mm\:ss"));
+            Progress(0);
+            return true;
         }
 
         #region Support
 
-        /// <summary>
-        /// Returns physical drive index upon which the logical partition resides
-        /// </summary>
-        /// <param name="driveLetter"></param>
-        /// <returns></returns>
-        private static int GetDiskIndex(string driveLetter)
-        {
-            int diskIndex = -1;
-
-            var scope = new ManagementScope(@"\root\cimv2");
-            var query = new ObjectQuery("select * from Win32_DiskPartition");
-            var searcher = new ManagementObjectSearcher(scope, query);
-            var drives = searcher.Get();
-
-            foreach (var current in drives)
-            {
-                var associators =
-                    new ObjectQuery("ASSOCIATORS OF {Win32_DiskPartition.DeviceID=\"" + current["deviceid"] +
-                                    "\"} where assocclass=Win32_LogicalDiskToPartition");
-                searcher = new ManagementObjectSearcher(scope, associators);
-                var disks = searcher.Get();
-                if (
-                    !(from ManagementObject disk in disks select (string) disk["deviceid"]).Any(
-                        thisDisk => thisDisk == driveLetter)) continue;
-                diskIndex = (int)(UInt32)current["diskindex"];
-            }
-
-            return diskIndex;
-        }
-
-        /// <summary>
-        /// Returns size of physical disk
-        /// </summary>
-        /// <param name="diskHandle"></param>
-        /// <returns></returns>
-        private static long GetDiskSize(SafeFileHandle diskHandle)
-        {
-            long size = -1;
-
-            var geometrySize = Marshal.SizeOf(typeof(DiskGeometryEx));
-            var geometryBlob = Marshal.AllocHGlobal(geometrySize);
-            uint numBytesRead = 0;
-
-            var success = NativeMethods.DeviceIoControl(diskHandle, NativeMethods.IOCTL_DISK_GET_DRIVE_GEOMETRY_EX, IntPtr.Zero,
-                                                    0, geometryBlob, (uint)geometrySize, ref numBytesRead, IntPtr.Zero);
-           
-            var geometry = (DiskGeometryEx)Marshal.PtrToStructure(geometryBlob, typeof(DiskGeometryEx));
-
-            if (success)
-                size = geometry.DiskSize;
-
-            Marshal.FreeHGlobal(geometryBlob);
-
-            return size;
-        }
-
-        bool IsPowerOfTwo(ulong x)
+        private static bool IsPowerOfTwo(ulong x)
         {
             return (x != 0) && ((x & (x - 1)) == 0);
         }
 
+        private void Progress(int progressValue)
+        {
+            if (_onProgress != null)
+                _onProgress(this, progressValue);
+        }
+
+        private void LogMsg(string msg)
+        {
+            if (_onLogMsg != null)
+                _onLogMsg(this, msg);
+        }
+        
         #endregion
     }
 }
