@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Management;
+using System.Linq;
 using System.Runtime.InteropServices;
+using DynamicDevices.DiskWriter.Detection;
 using Microsoft.Win32.SafeHandles;
 
 namespace DynamicDevices.DiskWriter.Win32
@@ -12,7 +13,6 @@ namespace DynamicDevices.DiskWriter.Win32
 
         SafeFileHandle _partitionHandle = null;
         SafeFileHandle _diskHandle = null;
-        ManagementEventWatcher _watcher = new ManagementEventWatcher();
 
         #endregion
 
@@ -23,30 +23,6 @@ namespace DynamicDevices.DiskWriter.Win32
         public event ProgressHandler OnProgress;
 
         public event EventHandler OnDiskChanged;
-
-        public bool StartListenForChanges()
-        {
-            var query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2 OR EventType = 3");
-            _watcher.EventArrived += WatcherEventArrived;
-            _watcher.Query = query;
-            _watcher.Start();
-            return true;
-        }
-
-        public void StopListenForChanges()
-        {
-            if(_watcher != null)
-            {
-                _watcher.Stop();
-                _watcher = null;
-            }
-        }
-
-        void  WatcherEventArrived(object sender, EventArrivedEventArgs e)
-        {
-            if(OnDiskChanged != null)
-                OnDiskChanged(sender, e);
-        }
 
         public Handle Open(string drivePath)
         {
@@ -165,6 +141,8 @@ namespace DynamicDevices.DiskWriter.Win32
         public string GetPhysicalPathForLogicalPath(string logicalPath)
         {
             int diskIndex = -1;
+
+            // todo: For Mono support we need to remove accesses to System.Management namespace
 
             logicalPath = logicalPath.Trim(new[] {'\\'});
             

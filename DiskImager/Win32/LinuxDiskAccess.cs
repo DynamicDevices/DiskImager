@@ -13,18 +13,6 @@ namespace DynamicDevices.DiskWriter.Win32
 
         public event ProgressHandler OnProgress;
 
-        public event EventHandler OnDiskChanged;
-
-        public bool StartListenForChanges()
-        {
-            throw new NotImplementedException();            
-        }
-
-        public void StopListenForChanges()
-        {
-            throw new NotImplementedException();            
-        }
-
         public Handle Open(string drivePath)
         {
             throw new NotImplementedException();

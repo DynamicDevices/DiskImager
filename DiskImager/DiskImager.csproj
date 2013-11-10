@@ -81,6 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detection\DriveDetector.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Disk.cs" />
     <Compile Include="DiskGeometry.cs" />
     <Compile Include="Enumerations.cs" />

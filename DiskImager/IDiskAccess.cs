@@ -8,12 +8,6 @@ namespace DynamicDevices.DiskWriter
 
         event ProgressHandler OnProgress;
 
-        event EventHandler OnDiskChanged;
-
-        bool StartListenForChanges();
-
-        void StopListenForChanges();
-
         Handle Open(string drivePath);
 
         bool LockDrive(string drivePath);

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using DynamicDevices.DiskWriter.Detection;
 using DynamicDevices.DiskWriter.Win32;
 using Microsoft.Win32;
 
@@ -13,6 +14,7 @@ namespace DynamicDevices.DiskWriter
 
         private readonly Disk _disk;
         private readonly IDiskAccess _diskAccess;
+        private  DriveDetector _watcher = new DriveDetector();
 
         private EnumCompressionType _eCompType;
 
@@ -79,8 +81,9 @@ namespace DynamicDevices.DiskWriter
             _disk.OnProgress += _disk_OnProgress;
             
             // Detect insertions / removals
-            _diskAccess.StartListenForChanges();
-            _diskAccess.OnDiskChanged += WatcherEventArrived;
+            _watcher.DeviceArrived += OnDriveArrived;
+            _watcher.DeviceRemoved += OnDriveRemoved;
+            StartListenForChanges();
         }
 
         #endregion
@@ -211,7 +214,9 @@ namespace DynamicDevices.DiskWriter
                 key.Close();
             }
 
-            _diskAccess.StopListenForChanges();
+            _watcher.DeviceArrived -= OnDriveArrived;
+            _watcher.DeviceRemoved -= OnDriveRemoved;
+            StopListenForChanges();
         }
 
         /// <summary>
@@ -392,5 +397,34 @@ namespace DynamicDevices.DiskWriter
 
         #endregion
 
+        #region Disk Change Handling
+
+        public bool StartListenForChanges()
+        {
+            _watcher.DeviceArrived += OnDriveArrived;
+            _watcher.DeviceRemoved += OnDriveRemoved;
+            return true;
+        }
+
+        public void StopListenForChanges()
+        {
+            if (_watcher != null)
+            {
+                _watcher.Dispose();
+                _watcher = null;
+            }
+        }
+
+        void OnDriveArrived(object sender, DriveDetectorEventArgs e)
+        {
+            WatcherEventArrived(sender, e);
+        }
+
+        void OnDriveRemoved(object sender, DriveDetectorEventArgs e)
+        {
+            WatcherEventArrived(sender, e);
+        }
+
+        #endregion
     }
 }
