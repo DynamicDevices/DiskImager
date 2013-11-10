@@ -76,16 +76,6 @@ namespace DynamicDevices.DiskWriter
             var dtStart = DateTime.Now;
 
             //
-            // Lock logical drive
-            //
-            var success = _diskAccess.LockDrive(driveLetter);
-            if (!success)
-            {
-                LogMsg(@"Failed to lock drive");
-                return false;
-            }            
-            
-            //
             // Get physical drive partition for logical partition
             // 
             var physicalDrive = _diskAccess.GetPhysicalPathForLogicalPath(driveLetter);
@@ -95,6 +85,17 @@ namespace DynamicDevices.DiskWriter
                 _diskAccess.UnlockDrive();
                 return false;
             }
+
+            //
+            // Lock logical drive
+            //
+            var success = _diskAccess.LockDrive(driveLetter);
+            if (!success)
+            {
+                LogMsg(@"Failed to lock drive");
+                return false;
+            }            
+            
 
             //
             // Get drive size 
@@ -280,16 +281,6 @@ namespace DynamicDevices.DiskWriter
             var dtStart = DateTime.Now;
 
             //
-            // Lock logical drive
-            //
-            var success = _diskAccess.LockDrive(driveLetter);
-            if(!success)
-            {
-                LogMsg(@"Failed to lock drive");
-                return false;                                
-            }
-
-            //
             // Map to physical drive
             // 
             var physicalDrive = _diskAccess.GetPhysicalPathForLogicalPath(driveLetter);
@@ -297,6 +288,16 @@ namespace DynamicDevices.DiskWriter
             {
                 LogMsg(@"Error: Couldn't map partition to physical drive");
                 _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            //
+            // Lock logical drive
+            //
+            var success = _diskAccess.LockDrive(driveLetter);
+            if (!success)
+            {
+                LogMsg(@"Failed to lock drive");
                 return false;
             }
 

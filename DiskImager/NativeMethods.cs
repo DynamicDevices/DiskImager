@@ -24,6 +24,8 @@ namespace DynamicDevices.DiskWriter
         internal const uint FILE_SHARE_WRITE = 0x2;
         internal const uint IOCTL_DISK_GET_DRIVE_GEOMETRY = 0x70000;
         internal const uint IOCTL_DISK_GET_DRIVE_GEOMETRY_EX = 0x700a0;
+        internal const uint IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
+        internal const uint IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
         internal const uint BCM_SETSHIELD = 0x160C;
         internal const int INVALID_SET_FILE_POINTER = -1;
 

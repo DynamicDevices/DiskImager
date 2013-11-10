@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Management;
-using System.Linq;
 using System.Runtime.InteropServices;
-using DynamicDevices.DiskWriter.Detection;
 using Microsoft.Win32.SafeHandles;
 
 namespace DynamicDevices.DiskWriter.Win32
@@ -140,35 +137,45 @@ namespace DynamicDevices.DiskWriter.Win32
 
         public string GetPhysicalPathForLogicalPath(string logicalPath)
         {
-            int diskIndex = -1;
+            var diskIndex = -1;
 
-            // todo: For Mono support we need to remove accesses to System.Management namespace
-
-            logicalPath = logicalPath.Trim(new[] {'\\'});
-            
-            var scope = new ManagementScope(@"\root\cimv2");
-            var query = new ObjectQuery("select * from Win32_DiskPartition");
-            var searcher = new ManagementObjectSearcher(scope, query);
-            var drives = searcher.Get();
-
-            foreach (var current in drives)
+            //
+            // Now that we've dismounted the logical volume mounted on the removable drive we can open up the physical disk to write
+            //
+            var diskHandle = NativeMethods.CreateFile(@"\\.\" + logicalPath, NativeMethods.GENERIC_READ, NativeMethods.FILE_SHARE_READ, IntPtr.Zero, NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero);
+            if (diskHandle.IsInvalid)
             {
-                var associators =
-                    new ObjectQuery("ASSOCIATORS OF {Win32_DiskPartition.DeviceID=\"" + current["deviceid"] +
-                                    "\"} where assocclass=Win32_LogicalDiskToPartition");
-                searcher = new ManagementObjectSearcher(scope, associators);
-                var disks = searcher.Get();
-                if (
-                    !(from ManagementObject disk in disks select (string)disk["deviceid"]).Any(
-                        thisDisk => thisDisk == logicalPath)) continue;
-                diskIndex = (int)(UInt32)current["diskindex"];
+                LogMsg(@"Failed to open device: " + Marshal.GetHRForLastWin32Error());
+                return null;
             }
 
+            var vdeSize = Marshal.SizeOf(typeof(VolumeDiskExtents));
+            var vdeBlob = Marshal.AllocHGlobal(vdeSize);
+            uint numBytesRead = 0;
+
+           var success = NativeMethods.DeviceIoControl(diskHandle, NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero,
+                                                    0, vdeBlob, (uint)vdeSize, ref numBytesRead, IntPtr.Zero);
+
+            var vde = (VolumeDiskExtents)Marshal.PtrToStructure(vdeBlob, typeof(VolumeDiskExtents));
+            if (success)
+            {
+                if (vde.NumberOfDiskExtents == 1)
+                    diskIndex = vde.DiskExtent1.DiskNumber;
+            }
+            else
+            {
+                LogMsg(@"Failed get physical disk: " + Marshal.GetHRForLastWin32Error());
+            }
+            Marshal.FreeHGlobal(vdeBlob);
+
+            diskHandle.Dispose();
+            
             var path = "";
             if(diskIndex >= 0)
                 path = @"\\.\PhysicalDrive" + diskIndex;
 
             return path;
+
         }
 
         public long GetDriveSize(string drivePath)

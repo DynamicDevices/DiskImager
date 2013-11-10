@@ -19,4 +19,19 @@ namespace DynamicDevices.DiskWriter
         public long DiskSize;
         public byte Data;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct DISK_EXTENT
+    {
+        public  int DiskNumber;
+        public ulong StartingOffset;
+        public ulong ExtentLength;
+    } 
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct VolumeDiskExtents
+    {
+        public uint NumberOfDiskExtents;
+        public DISK_EXTENT DiskExtent1;
+    }
 }
