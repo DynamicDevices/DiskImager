@@ -251,9 +251,13 @@ namespace DynamicDevices.DiskWriter
                 }
             }
 
+            var errored = false;
+
         readfail1:
+            errored = true;
             _diskAccess.Close();
-        readfail2:            
+        readfail2:
+            errored = true;
 
             _diskAccess.UnlockDrive();
 
@@ -264,7 +268,7 @@ namespace DynamicDevices.DiskWriter
             else 
                 LogMsg("All Done - Elapsed time " + tstotalTime.ToString(@"dd\.hh\:mm\:ss"));
             Progress(0);
-            return true;
+            return !errored;
         }
 
         /// <summary>

@@ -27,6 +27,8 @@ namespace DynamicDevices.DiskWriter
         {
             InitializeComponent();
 
+            MessageBoxEx.Owner = this.Handle;
+
             toolStripStatusLabel1.Text = @"Initialised. Licensed under GPLv3. Use at own risk!";
 
             saveFileDialog1.OverwritePrompt = false;
@@ -200,14 +202,19 @@ namespace DynamicDevices.DiskWriter
 
             DisableButtons(true);
 
+            var success = false;
             try
             {
-                _disk.WriteDrive(drive, textBoxFileName.Text, _eCompType);
+                success = _disk.WriteDrive(drive, textBoxFileName.Text, _eCompType);
             }
             catch (Exception ex)
             {
+                success = false;
                 toolStripStatusLabel1.Text = ex.Message;
             }
+
+            if (!success)
+                MessageBoxEx.Show("Problem writing to disk. Is it write-protected?", "Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             EnableButtons();
         }
