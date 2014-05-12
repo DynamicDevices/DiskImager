@@ -15,18 +15,18 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
-        "OwnerKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_9B623498F19E6C23820A5DAFD038EC02"
+        "OwnerKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
         "MsmSig" = "8:_UNDEFINED"
@@ -34,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+        "OwnerKey" = "8:_9B623498F19E6C23820A5DAFD038EC02"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -142,20 +142,20 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9B623498F19E6C23820A5DAFD038EC02"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4BF8E0C0CEA1BCFDD3FAE4CBE0488579"
+                    "_9B623498F19E6C23820A5DAFD038EC02"
                     {
-                    "Name" = "8:SharpZipLib.dll"
+                    "Name" = "8:ICSharpCode.SharpZipLib.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:SharpZipLib.dll"
+            "SourcePath" = "8:ICSharpCode.SharpZipLib.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_072AE4B10D3C471AA2B16D68E3691837"
@@ -229,15 +229,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Disk Imager"
-        "ProductCode" = "8:{3DD61C51-26C0-4BD7-9E6D-9F3C64649F40}"
-        "PackageCode" = "8:{E9147BD3-2E49-46B2-BFEC-A16C8C946312}"
+        "ProductCode" = "8:{6E344534-613C-4B00-9210-8E0C1102A687}"
+        "PackageCode" = "8:{3FAB2B39-DFDB-413B-AD64-7971CC8C37B5}"
         "UpgradeCode" = "8:{A2F957D8-23F6-44DB-A22C-CCA8275E1FCE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.3"
+        "ProductVersion" = "8:1.0.4"
         "Manufacturer" = "8:Dynamic Devices"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

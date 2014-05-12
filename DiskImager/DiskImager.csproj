@@ -65,9 +65,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpZipLib">
-      <HintPath>..\Libs\SharpZipLib\SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -152,6 +149,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.SharpZipLib\ICSharpCode.SharpZLib.csproj">
+      <Project>{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}</Project>
+      <Name>ICSharpCode.SharpZLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

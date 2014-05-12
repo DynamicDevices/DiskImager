@@ -49,9 +49,12 @@
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayAllDrivesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBoxTruncation = new System.Windows.Forms.GroupBox();
+            this.checkBoxUseMBR = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.groupBoxCompression.SuspendLayout();
             this.menuStripMain.SuspendLayout();
+            this.groupBoxTruncation.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxDrives
@@ -75,7 +78,7 @@
             // 
             // buttonRead
             // 
-            this.buttonRead.Location = new System.Drawing.Point(12, 109);
+            this.buttonRead.Location = new System.Drawing.Point(12, 115);
             this.buttonRead.Name = "buttonRead";
             this.buttonRead.Size = new System.Drawing.Size(75, 23);
             this.buttonRead.TabIndex = 2;
@@ -85,7 +88,7 @@
             // 
             // buttonWrite
             // 
-            this.buttonWrite.Location = new System.Drawing.Point(93, 109);
+            this.buttonWrite.Location = new System.Drawing.Point(93, 115);
             this.buttonWrite.Name = "buttonWrite";
             this.buttonWrite.Size = new System.Drawing.Size(75, 23);
             this.buttonWrite.TabIndex = 3;
@@ -95,7 +98,7 @@
             // 
             // buttonExit
             // 
-            this.buttonExit.Location = new System.Drawing.Point(255, 109);
+            this.buttonExit.Location = new System.Drawing.Point(255, 115);
             this.buttonExit.Name = "buttonExit";
             this.buttonExit.Size = new System.Drawing.Size(75, 23);
             this.buttonExit.TabIndex = 4;
@@ -117,9 +120,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 183);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 239);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(600, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(605, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -131,6 +134,7 @@
             // 
             // saveFileDialog1
             // 
+            this.saveFileDialog1.AddExtension = false;
             this.saveFileDialog1.DefaultExt = "img";
             this.saveFileDialog1.Filter = "Image Files (*.img)|*.img|Binary files (*.bin)|*.bin|All files (*.*)|*.*";
             // 
@@ -154,7 +158,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 157);
+            this.progressBar1.Location = new System.Drawing.Point(12, 214);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(578, 10);
             this.progressBar1.TabIndex = 9;
@@ -162,7 +166,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(174, 109);
+            this.buttonCancel.Location = new System.Drawing.Point(174, 115);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -235,7 +239,7 @@
             this.optionsToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Size = new System.Drawing.Size(600, 24);
+            this.menuStripMain.Size = new System.Drawing.Size(605, 24);
             this.menuStripMain.TabIndex = 12;
             this.menuStripMain.Text = "menuStrip1";
             // 
@@ -255,11 +259,32 @@
             this.displayAllDrivesToolStripMenuItem.Text = "Display All Drives  *** DANGEROUS ***";
             this.displayAllDrivesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.DisplayAllDrivesToolStripMenuItemCheckedChanged);
             // 
+            // groupBoxTruncation
+            // 
+            this.groupBoxTruncation.Controls.Add(this.checkBoxUseMBR);
+            this.groupBoxTruncation.Location = new System.Drawing.Point(336, 151);
+            this.groupBoxTruncation.Name = "groupBoxTruncation";
+            this.groupBoxTruncation.Size = new System.Drawing.Size(252, 48);
+            this.groupBoxTruncation.TabIndex = 13;
+            this.groupBoxTruncation.TabStop = false;
+            this.groupBoxTruncation.Text = "Image Truncation";
+            // 
+            // checkBoxUseMBR
+            // 
+            this.checkBoxUseMBR.AutoSize = true;
+            this.checkBoxUseMBR.Location = new System.Drawing.Point(23, 19);
+            this.checkBoxUseMBR.Name = "checkBoxUseMBR";
+            this.checkBoxUseMBR.Size = new System.Drawing.Size(138, 17);
+            this.checkBoxUseMBR.TabIndex = 0;
+            this.checkBoxUseMBR.Text = "Use MBR partition sizes";
+            this.checkBoxUseMBR.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 205);
+            this.ClientSize = new System.Drawing.Size(605, 261);
+            this.Controls.Add(this.groupBoxTruncation);
             this.Controls.Add(this.groupBoxCompression);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.progressBar1);
@@ -286,6 +311,8 @@
             this.groupBoxCompression.PerformLayout();
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
+            this.groupBoxTruncation.ResumeLayout(false);
+            this.groupBoxTruncation.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -314,6 +341,8 @@
         private System.Windows.Forms.MenuStrip menuStripMain;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem displayAllDrivesToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBoxTruncation;
+        private System.Windows.Forms.CheckBox checkBoxUseMBR;
     }
 }
 

@@ -27,6 +27,8 @@ namespace DynamicDevices.DiskWriter
         {
             InitializeComponent();
 
+            checkBoxUseMBR.Checked = true;
+
             MessageBoxEx.Owner = this.Handle;
 
             toolStripStatusLabel1.Text = @"Initialised. Licensed under GPLv3. Use at own risk!";
@@ -52,7 +54,9 @@ namespace DynamicDevices.DiskWriter
             var key = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Dynamic Devices Ltd\\DiskImager");
             if (key != null)
             {
-                textBoxFileName.Text = (string)key.GetValue("FileName", "");
+                var file = (string)key.GetValue("FileName", "");
+                if (File.Exists(file))
+                    textBoxFileName.Text = file;
 
                 var drive = (string)key.GetValue("Drive", "");
                 if (string.IsNullOrEmpty(drive))
@@ -143,7 +147,6 @@ namespace DynamicDevices.DiskWriter
         /// <param name="e"></param>
         private void ButtonChooseFileClick(object sender, EventArgs e)
         {
-
             ChooseFile();
         }
 
@@ -166,7 +169,7 @@ namespace DynamicDevices.DiskWriter
 
             try
             {
-                _disk.ReadDrive(drive, textBoxFileName.Text, _eCompType);
+                _disk.ReadDrive(drive, textBoxFileName.Text, _eCompType, checkBoxUseMBR.Checked);
             } catch(Exception ex)
             {
                 toolStripStatusLabel1.Text = ex.Message;
@@ -213,7 +216,7 @@ namespace DynamicDevices.DiskWriter
                 toolStripStatusLabel1.Text = ex.Message;
             }
 
-            if (!success)
+            if (!success && !_disk.IsCancelling)
                 MessageBoxEx.Show("Problem writing to disk. Is it write-protected?", "Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             EnableButtons();
@@ -274,7 +277,10 @@ namespace DynamicDevices.DiskWriter
 
         private void UpdateFileNameText()
         {
+            
             var text = textBoxFileName.Text;
+
+         
             text = text.Replace(".tar.gz", "");
             text = text.Replace(".tgz", "");
             text = text.Replace(".tar", "");
@@ -307,11 +313,12 @@ namespace DynamicDevices.DiskWriter
         private void ChooseFile()
         {
             var dr = saveFileDialog1.ShowDialog();
+
             if (dr != DialogResult.OK)
                 return;
             
             textBoxFileName.Text = saveFileDialog1.FileName;
-            TextBoxFileNameTextChanged(this, null);
+                TextBoxFileNameTextChanged(this, null);
         }
 
         private void TextBoxFileNameTextChanged(object sender, EventArgs e)
@@ -418,6 +425,7 @@ namespace DynamicDevices.DiskWriter
             textBoxFileName.Enabled = false;
             buttonChooseFile.Enabled = false;
             groupBoxCompression.Enabled = false;
+            groupBoxTruncation.Enabled = false;
         }
 
         /// <summary>
@@ -433,6 +441,7 @@ namespace DynamicDevices.DiskWriter
             textBoxFileName.Enabled = true;
             buttonChooseFile.Enabled = true;
             groupBoxCompression.Enabled = true;
+            groupBoxTruncation.Enabled = true;
         }
 
         #endregion

@@ -28,6 +28,10 @@ Credits: Inspired by the excellent Win32DiskImager.
 ChangeLog
 =========
 
+1.1.0	12/05/14	AJL		Updated to use latest SharpZipLib as we were encountering (de-)compression errors with the previous version
+							Added the option to truncate the read image based on the partition sizes found in the master boot record on the disk/stick
+							Improved logging of sizes read and written
+
 1.0.3	30/04/14	AJL		Added warning dialog box when there's a write error 
 
 1.0.2	09/11/13	AJL		Added support for reading and writing directly to compressed formats: .zip, .tgz, .gz
