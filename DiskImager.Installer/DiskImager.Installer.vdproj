@@ -21,7 +21,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DB06497D6EA628F02D7A42761AF2DBAE"
+        "MsmKey" = "8:_CB056AF0C1ABAC7EAE4CC854BEAD1B42"
         "OwnerKey" = "8:_8FDF365DCE9B4F70A60EF2BB1651CCBF"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -34,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DB06497D6EA628F02D7A42761AF2DBAE"
+        "OwnerKey" = "8:_CB056AF0C1ABAC7EAE4CC854BEAD1B42"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -142,14 +142,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DB06497D6EA628F02D7A42761AF2DBAE"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_CB056AF0C1ABAC7EAE4CC854BEAD1B42"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_DB06497D6EA628F02D7A42761AF2DBAE"
+                    "_CB056AF0C1ABAC7EAE4CC854BEAD1B42"
                     {
                     "Name" = "8:ICSharpCode.SharpZipLib.dll"
                     "Attributes" = "3:512"
@@ -229,15 +229,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Disk Imager"
-        "ProductCode" = "8:{BEFE1D43-19A6-48F2-8340-92AD4513A108}"
-        "PackageCode" = "8:{1F1B2C34-933B-4AF1-8972-0CD044A9E172}"
+        "ProductCode" = "8:{7AE7013F-7719-46F7-BA1E-77085FB0AC2A}"
+        "PackageCode" = "8:{8B82D457-AA37-4EE1-877E-1AE6DDEFC68E}"
         "UpgradeCode" = "8:{A2F957D8-23F6-44DB-A22C-CCA8275E1FCE}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.1.1"
         "Manufacturer" = "8:Dynamic Devices"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

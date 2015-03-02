@@ -28,6 +28,8 @@ Credits: Inspired by the excellent Win32DiskImager.
 ChangeLog
 =========
 
+1.1.1	02/03/14	AJL		Minor fix to error message when source file not available
+
 1.1.0	12/05/14	AJL		Updated to use latest SharpZipLib as we were encountering (de-)compression errors with the previous version
 							Added the option to truncate the read image based on the partition sizes found in the master boot record on the disk/stick
 							Improved logging of sizes read and written

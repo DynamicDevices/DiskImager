@@ -205,6 +205,13 @@ namespace DynamicDevices.DiskWriter
 
             DisableButtons(true);
 
+            if(!File.Exists(textBoxFileName.Text))
+            {
+                MessageBoxEx.Show("File does not exist!", "I/O Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                EnableButtons();
+                return;
+            }
+
             var success = false;
             try
             {
