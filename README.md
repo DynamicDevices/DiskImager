@@ -21,12 +21,16 @@ This utility is a C#.NET implementation, and adds a couple of features I wanted 
 
 - it also *might* be slightly faster when dealing with uncompressed read/write
 
-*NOTE This application is under development and could possibly cause damage to your computer drive(s). We cannot take responsibility for any damage caused or losses incurred through use of this utility. Use at own risk!*
+*NOTE This application could possibly cause damage to your computer drive(s). We cannot take responsibility for any damage caused or losses incurred through use of this utility. Use at own risk!*
 
 Credits: Inspired by the excellent Win32DiskImager.
 
 ChangeLog
 =========
+
+1.1.3	03/05/16	AJL		Add button to erase MBR (allows us to then reformat the drive to full capacity)
+
+1.1.2	20/08/15	AJL		Add support for writing partial files (start/length)
 
 1.1.1	02/03/14	AJL		Minor fix to error message when source file not available
 

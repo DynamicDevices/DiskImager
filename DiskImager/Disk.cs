@@ -288,13 +288,87 @@ namespace DynamicDevices.DiskWriter
         }
 
         /// <summary>
+        /// Erase MBR of drive (allows us to then reinsert and it will reformat to full capacity)
+        /// </summary>
+        /// <param name="driveLetter"></param>
+        /// <param name="fileName"></param>
+        /// <param name="eCompType"></param>
+        /// <returns></returns>
+        public bool EraseMBR(string driveLetter)
+        {
+            var isErrored = false;
+
+            IsCancelling = false;
+
+            var dtStart = DateTime.Now;
+
+            //
+            // Get physical drive partition for logical partition
+            // 
+            var physicalDrive = _diskAccess.GetPhysicalPathForLogicalPath(driveLetter);
+            if (string.IsNullOrEmpty(physicalDrive))
+            {
+                LogMsg(@"Error: Couldn't map partition to physical drive");
+                _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            //
+            // Lock logical drive
+            //
+            var success = _diskAccess.LockDrive(driveLetter);
+            if (!success)
+            {
+                LogMsg(@"Failed to lock drive");
+                return false;
+            }
+
+
+            //
+            // Get drive size 
+            //
+            var driveSize = _diskAccess.GetDriveSize(physicalDrive);
+            if (driveSize <= 0)
+            {
+                LogMsg(@"Failed to get device size");
+                _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            //
+            // Open the physical drive
+            // 
+            var physicalHandle = _diskAccess.Open(physicalDrive);
+            if (physicalHandle == null)
+            {
+                LogMsg(@"Failed to open physical drive");
+                _diskAccess.UnlockDrive();
+                return false;
+            }
+
+            var zeroData = new byte[512];
+            int wroteBytes;
+            if (_diskAccess.Write(zeroData, zeroData.Length, out wroteBytes) < 0)
+            {
+                LogMsg(@"Error writing data to drive: " + Marshal.GetHRForLastWin32Error());
+                isErrored = true;
+            }
+
+            _diskAccess.Close();
+
+            _diskAccess.UnlockDrive();
+
+            return !isErrored;
+        }
+
+        /// <summary>
         /// Read data direct from drive to file
         /// </summary>
         /// <param name="driveLetter"></param>
         /// <param name="fileName"></param>
         /// <param name="eCompType"></param>
         /// <returns></returns>
-        public bool ReadDrive(string driveLetter, string fileName, EnumCompressionType eCompType, bool bUseMBR)
+        public bool ReadDrive(string driveLetter, string fileName, EnumCompressionType eCompType, bool bUseMBR, long start, long length)
         {
             IsCancelling = false;
 
@@ -351,8 +425,7 @@ namespace DynamicDevices.DiskWriter
 
             var buffer = new byte[Globals.MaxBufferSize];
             var offset = 0L;
-
-
+            
             using(var basefs = (Stream)new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 Stream fs;

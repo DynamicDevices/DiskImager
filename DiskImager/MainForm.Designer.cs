@@ -51,10 +51,17 @@
             this.displayAllDrivesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTruncation = new System.Windows.Forms.GroupBox();
             this.checkBoxUseMBR = new System.Windows.Forms.CheckBox();
+            this.Advanced = new System.Windows.Forms.GroupBox();
+            this.labelLength = new System.Windows.Forms.Label();
+            this.labelStart = new System.Windows.Forms.Label();
+            this.textBoxLength = new System.Windows.Forms.TextBox();
+            this.textBoxStart = new System.Windows.Forms.TextBox();
+            this.buttonEraseMBR = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBoxCompression.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             this.groupBoxTruncation.SuspendLayout();
+            this.Advanced.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxDrives
@@ -78,9 +85,9 @@
             // 
             // buttonRead
             // 
-            this.buttonRead.Location = new System.Drawing.Point(12, 115);
+            this.buttonRead.Location = new System.Drawing.Point(15, 96);
             this.buttonRead.Name = "buttonRead";
-            this.buttonRead.Size = new System.Drawing.Size(75, 23);
+            this.buttonRead.Size = new System.Drawing.Size(53, 23);
             this.buttonRead.TabIndex = 2;
             this.buttonRead.Text = "Read";
             this.buttonRead.UseVisualStyleBackColor = true;
@@ -88,9 +95,9 @@
             // 
             // buttonWrite
             // 
-            this.buttonWrite.Location = new System.Drawing.Point(93, 115);
+            this.buttonWrite.Location = new System.Drawing.Point(74, 96);
             this.buttonWrite.Name = "buttonWrite";
-            this.buttonWrite.Size = new System.Drawing.Size(75, 23);
+            this.buttonWrite.Size = new System.Drawing.Size(54, 23);
             this.buttonWrite.TabIndex = 3;
             this.buttonWrite.Text = "Write";
             this.buttonWrite.UseVisualStyleBackColor = true;
@@ -98,9 +105,9 @@
             // 
             // buttonExit
             // 
-            this.buttonExit.Location = new System.Drawing.Point(255, 115);
+            this.buttonExit.Location = new System.Drawing.Point(270, 96);
             this.buttonExit.Name = "buttonExit";
-            this.buttonExit.Size = new System.Drawing.Size(75, 23);
+            this.buttonExit.Size = new System.Drawing.Size(63, 23);
             this.buttonExit.TabIndex = 4;
             this.buttonExit.Text = "Exit";
             this.buttonExit.UseVisualStyleBackColor = true;
@@ -166,9 +173,9 @@
             // buttonCancel
             // 
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(174, 115);
+            this.buttonCancel.Location = new System.Drawing.Point(216, 96);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(48, 23);
             this.buttonCancel.TabIndex = 10;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -279,11 +286,68 @@
             this.checkBoxUseMBR.Text = "Use MBR partition sizes";
             this.checkBoxUseMBR.UseVisualStyleBackColor = true;
             // 
+            // Advanced
+            // 
+            this.Advanced.Controls.Add(this.labelLength);
+            this.Advanced.Controls.Add(this.labelStart);
+            this.Advanced.Controls.Add(this.textBoxLength);
+            this.Advanced.Controls.Add(this.textBoxStart);
+            this.Advanced.Location = new System.Drawing.Point(12, 125);
+            this.Advanced.Name = "Advanced";
+            this.Advanced.Size = new System.Drawing.Size(318, 74);
+            this.Advanced.TabIndex = 14;
+            this.Advanced.TabStop = false;
+            this.Advanced.Text = "Advanced";
+            // 
+            // labelLength
+            // 
+            this.labelLength.AutoSize = true;
+            this.labelLength.Location = new System.Drawing.Point(16, 49);
+            this.labelLength.Name = "labelLength";
+            this.labelLength.Size = new System.Drawing.Size(40, 13);
+            this.labelLength.TabIndex = 4;
+            this.labelLength.Text = "Length";
+            // 
+            // labelStart
+            // 
+            this.labelStart.AutoSize = true;
+            this.labelStart.Location = new System.Drawing.Point(16, 22);
+            this.labelStart.Name = "labelStart";
+            this.labelStart.Size = new System.Drawing.Size(29, 13);
+            this.labelStart.TabIndex = 3;
+            this.labelStart.Text = "Start";
+            // 
+            // textBoxLength
+            // 
+            this.textBoxLength.Location = new System.Drawing.Point(84, 48);
+            this.textBoxLength.Name = "textBoxLength";
+            this.textBoxLength.Size = new System.Drawing.Size(228, 20);
+            this.textBoxLength.TabIndex = 2;
+            // 
+            // textBoxStart
+            // 
+            this.textBoxStart.Location = new System.Drawing.Point(84, 19);
+            this.textBoxStart.Name = "textBoxStart";
+            this.textBoxStart.Size = new System.Drawing.Size(228, 20);
+            this.textBoxStart.TabIndex = 1;
+            // 
+            // buttonEraseMBR
+            // 
+            this.buttonEraseMBR.Location = new System.Drawing.Point(134, 96);
+            this.buttonEraseMBR.Name = "buttonEraseMBR";
+            this.buttonEraseMBR.Size = new System.Drawing.Size(76, 23);
+            this.buttonEraseMBR.TabIndex = 15;
+            this.buttonEraseMBR.Text = "Erase MBR";
+            this.buttonEraseMBR.UseVisualStyleBackColor = true;
+            this.buttonEraseMBR.Click += new System.EventHandler(this.ButtonEraseMBRClick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 261);
+            this.Controls.Add(this.buttonEraseMBR);
+            this.Controls.Add(this.Advanced);
             this.Controls.Add(this.groupBoxTruncation);
             this.Controls.Add(this.groupBoxCompression);
             this.Controls.Add(this.buttonCancel);
@@ -313,6 +377,8 @@
             this.menuStripMain.PerformLayout();
             this.groupBoxTruncation.ResumeLayout(false);
             this.groupBoxTruncation.PerformLayout();
+            this.Advanced.ResumeLayout(false);
+            this.Advanced.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -343,6 +409,12 @@
         private System.Windows.Forms.ToolStripMenuItem displayAllDrivesToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBoxTruncation;
         private System.Windows.Forms.CheckBox checkBoxUseMBR;
+        private System.Windows.Forms.GroupBox Advanced;
+        private System.Windows.Forms.Label labelLength;
+        private System.Windows.Forms.Label labelStart;
+        private System.Windows.Forms.TextBox textBoxLength;
+        private System.Windows.Forms.TextBox textBoxStart;
+        private System.Windows.Forms.Button buttonEraseMBR;
     }
 }
 

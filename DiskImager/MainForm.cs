@@ -31,7 +31,7 @@ namespace DynamicDevices.DiskWriter
 
             MessageBoxEx.Owner = this.Handle;
 
-            toolStripStatusLabel1.Text = @"Initialised. Licensed under GPLv3. Use at own risk!";
+            toolStripStatusLabel1.Text = @"Initialised. Licensed under GPLv3.";
 
             saveFileDialog1.OverwritePrompt = false;
             saveFileDialog1.Filter = @"Image Files (*.img,*.bin,*.sdcard)|*.img;*.bin;*.sdcard|Compressed Files (*.zip,*.gz,*tgz)|*.zip;*.gz;*.tgz|All files (*.*)|*.*";
@@ -169,7 +169,30 @@ namespace DynamicDevices.DiskWriter
 
             try
             {
-                _disk.ReadDrive(drive, textBoxFileName.Text, _eCompType, checkBoxUseMBR.Checked);
+                var start = 0l;
+
+                if(!string.IsNullOrEmpty(textBoxStart.Text))
+                {
+                    try
+                    {
+                        start = long.Parse(textBoxStart.Text);
+                    } catch
+                    {
+                    }
+                }
+
+                var length = 0l;
+                if(!string.IsNullOrEmpty(textBoxLength.Text))
+                {
+                    try
+                    {
+                        length = long.Parse(textBoxLength.Text);
+                    } catch
+                    {
+                    }
+                }
+
+                _disk.ReadDrive(drive, textBoxFileName.Text, _eCompType, checkBoxUseMBR.Checked, start, length);
             } catch(Exception ex)
             {
                 toolStripStatusLabel1.Text = ex.Message;
@@ -228,6 +251,31 @@ namespace DynamicDevices.DiskWriter
 
             EnableButtons();
         }
+
+        private void ButtonEraseMBRClick(object sender, EventArgs e)
+        {
+            if (comboBoxDrives.SelectedIndex < 0)
+                return;
+
+            var drive = (string)comboBoxDrives.SelectedItem;
+
+            var success = false;
+            try
+            {
+                success = _disk.EraseMBR(drive);
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+
+            if (!success && !_disk.IsCancelling)
+                MessageBoxEx.Show("Problem writing to disk. Is it write-protected?", "Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+                MessageBoxEx.Show("MBR erased. Please remove and reinsert to format", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
 
         /// <summary>
         /// Called to persist registry values on closure so we can remember things like last file used
@@ -325,7 +373,8 @@ namespace DynamicDevices.DiskWriter
                 return;
             
             textBoxFileName.Text = saveFileDialog1.FileName;
-                TextBoxFileNameTextChanged(this, null);
+            
+            TextBoxFileNameTextChanged(this, null);
         }
 
         private void TextBoxFileNameTextChanged(object sender, EventArgs e)
@@ -426,6 +475,7 @@ namespace DynamicDevices.DiskWriter
         {
             buttonRead.Enabled = false;
             buttonWrite.Enabled = false;
+            buttonEraseMBR.Enabled = false;
             buttonExit.Enabled = !running;
             buttonCancel.Enabled = running;
             comboBoxDrives.Enabled = false;
@@ -442,6 +492,7 @@ namespace DynamicDevices.DiskWriter
         {
             buttonRead.Enabled = true;
             buttonWrite.Enabled = true;
+            buttonEraseMBR.Enabled = true;
             buttonExit.Enabled = true;
             buttonCancel.Enabled = false;
             comboBoxDrives.Enabled = true;
